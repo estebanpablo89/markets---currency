@@ -33,6 +33,12 @@ functions:
       - http:
           method: GET
           path: /markets
+  getMarket:
+    handler: src/handlers/getMarket.handler
+    events:
+      - http:
+          method: GET
+          path: /market/{id}
 
 custom:
   MarketsTable:

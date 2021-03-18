@@ -1,29 +1,36 @@
 import AWS from 'aws-sdk';
-import middy from '@middy/core';
 import commonMiddleware from '../lib/commonMiddleware';
 import createError from 'http-errors';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-async function getMarkets(event, context) {
-  let markets;
+async function getMarket(event, context) {
+  let market;
+
+  const { id } = event.pathParameters;
 
   try {
     const result = await dynamodb
-      .scan({
+      .get({
         TableName: process.env.MARKETS_TABLE_NAME,
+        Key: { id },
       })
       .promise();
 
-    markets = result.Items;
+    market = result.Item;
   } catch (error) {
     console.error(error);
     throw new createError.InternalServerError(error);
   }
+
+  if (!market) {
+    throw new createError.NotFound(`Market with ID ${id} not found!`);
+  }
+
   return {
     statusCode: 200,
-    body: JSON.stringify(markets),
+    body: JSON.stringify(market),
   };
 }
 
-export const handler = commonMiddleware(getMarkets);
+export const handler = commonMiddleware(getMarket);

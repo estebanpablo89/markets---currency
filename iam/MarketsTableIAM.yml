@@ -3,5 +3,6 @@ MarketsTableIAM:
   Action:
     - dynamodb:PutItem
     - dynamodb:Scan
+    - dynamodb:GetItem
   Resource:
     - ${self:custom.MarketsTable.arn}
