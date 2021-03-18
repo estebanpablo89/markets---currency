@@ -45,6 +45,12 @@ functions:
       - http:
           method: PATCH
           path: /market/{id}
+  deleteMarket:
+    handler: src/handlers/deleteMarket.handler
+    events:
+      - http:
+          method: DELETE
+          path: /market/{id}
 
 custom:
   MarketsTable:

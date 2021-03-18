@@ -7,7 +7,12 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function updateMarket(event, context) {
   const { id } = event.pathParameters;
-  const { code_symbol, display, show_cents } = event.body;
+  const {
+    code_symbol,
+    currency_before_price,
+    display,
+    show_cents,
+  } = event.body;
 
   await getMarketById(id);
 
@@ -15,9 +20,10 @@ async function updateMarket(event, context) {
     TableName: process.env.MARKETS_TABLE_NAME,
     Key: { id },
     UpdateExpression:
-      'set currencyFormat.code_symbol = :code_symbol, currencyFormat.show_cents = :show_cents, currencyFormat.display = :display',
+      'set currencyFormat.code_symbol = :code_symbol, currencyFormat.currency_before_price = :currency_before_price, currencyFormat.show_cents = :show_cents, currencyFormat.display = :display',
     ExpressionAttributeValues: {
       ':code_symbol': code_symbol,
+      ':currency_before_price': currency_before_price,
       ':show_cents': show_cents,
       ':display': display,
     },

@@ -10,6 +10,7 @@ async function createMarket(event, context) {
     country,
     currency,
     code_symbol,
+    currency_before_price,
     show_cents,
     display,
   } = event.body;
@@ -22,6 +23,7 @@ async function createMarket(event, context) {
     currency,
     currencyFormat: {
       code_symbol,
+      currency_before_price,
       show_cents,
       display,
     },
