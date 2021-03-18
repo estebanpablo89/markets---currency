@@ -9,7 +9,7 @@ const validMarket = {
   code_symbol: 'symbol',
   currency_before_price: true,
   show_cents: true,
-  display: '#.###',
+  display: '#.###,##',
 };
 
 const postMarket = (market = validMarket) => {
@@ -57,11 +57,86 @@ describe('Market', () => {
       code_symbol: 'symbol',
       currency_before_price: true,
       show_cents: true,
-      display: '#.###',
+      display: '#.###,#',
     });
     expect(response.status).toBe(400);
     expect(response.body.error).toBe(
-      'Incorrect currency, supported format values are: USD, CAD, EUR...'
+      'Incorrect currency, supported format values are: USD, CAD, EUR, etc...'
+    );
+  });
+
+  it('returns 400 status and Incorrect country message if country in market is incorrect', async () => {
+    const response = await postMarket({
+      country: 'Ecuadordaslkjf',
+      currency: 'USD',
+      code_symbol: 'symbol',
+      currency_before_price: true,
+      show_cents: true,
+      display: '#.###,#',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe(
+      'Incorrect country, supported format values are: United States, Ecuador, Venezuela, Spain, etc...'
+    );
+  });
+
+  it('returns 400 status and Incorrect format message if currency_before_price in market is not boolean', async () => {
+    const response = await postMarket({
+      country: 'Ecuador',
+      currency: 'USD',
+      code_symbol: 'symbol',
+      currency_before_price: 'klasfd8',
+      show_cents: true,
+      display: '#.###,#',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe(
+      'Incorrect format, currency_before_price & show_cents fields only accepts true or false'
+    );
+  });
+
+  it('returns 400 status and Incorrect format message if show_cents in market is not boolean', async () => {
+    const response = await postMarket({
+      country: 'Ecuador',
+      currency: 'USD',
+      code_symbol: 'symbol',
+      currency_before_price: 'klasfd8',
+      show_cents: 'kshadsk',
+      display: '#.###,#',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe(
+      'Incorrect format, currency_before_price & show_cents fields only accepts true or false'
+    );
+  });
+
+  it('returns 400 status and Incorrect format message if display in market is not correct', async () => {
+    const response = await postMarket({
+      country: 'Ecuador',
+      currency: 'USD',
+      code_symbol: 'symbol',
+      currency_before_price: true,
+      show_cents: true,
+      display: '#.#jkhg##',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe(
+      'Incorrect format, display only accepts #.###,## or #,###.##'
+    );
+  });
+
+  it('returns 400 status and Incorrect format message if display in market is not correct', async () => {
+    const response = await postMarket({
+      country: 'Ecuador',
+      currency: 'USD',
+      code_symbol: 'lkjl',
+      currency_before_price: true,
+      show_cents: true,
+      display: '#,###.##',
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe(
+      'Incorrect format, code_symbol only accepts code or symbol'
     );
   });
 });
