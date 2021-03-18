@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import AWS from 'aws-sdk';
 import commonMiddleware from '../lib/commonMiddleware';
 import createError from 'http-errors';
+import validation from '../validation/validation';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -14,6 +15,15 @@ async function createMarket(event, context) {
     show_cents,
     display,
   } = event.body;
+
+  validation(
+    country,
+    currency,
+    code_symbol,
+    currency_before_price,
+    show_cents,
+    display
+  );
 
   const now = new Date();
 
