@@ -1,12 +1,15 @@
 import AWS from 'aws-sdk';
 import commonMiddleware from '../lib/commonMiddleware';
 import createError from 'http-errors';
+import { getMarketById } from './getMarket';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function updateMarket(event, context) {
   const { id } = event.pathParameters;
   const { code_symbol, display, show_cents } = event.body;
+
+  await getMarketById(id);
 
   const params = {
     TableName: process.env.MARKETS_TABLE_NAME,

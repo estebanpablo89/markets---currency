@@ -4,10 +4,8 @@ import createError from 'http-errors';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-async function getMarket(event, context) {
+export async function getMarketById(id) {
   let market;
-
-  const { id } = event.pathParameters;
 
   try {
     const result = await dynamodb
@@ -26,6 +24,14 @@ async function getMarket(event, context) {
   if (!market) {
     throw new createError.NotFound(`Market with ID ${id} not found!`);
   }
+
+  return market;
+}
+
+async function getMarket(event, context) {
+  const { id } = event.pathParameters;
+
+  const market = await getMarketById(id);
 
   return {
     statusCode: 200,
