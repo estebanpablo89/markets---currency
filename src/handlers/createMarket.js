@@ -28,7 +28,7 @@ async function createMarket(event, context) {
 
   await dynamodb
     .put({
-      TableName: 'MarketsTable',
+      TableName: process.env.MARKETS_TABLE_NAME,
       Item: market,
     })
     .promise();

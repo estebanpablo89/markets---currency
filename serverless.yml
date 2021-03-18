@@ -11,26 +11,14 @@ provider:
   memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: us-east-2
+  environment:
+    MARKETS_TABLE_NAME: ${self:custom.MarketsTable.name}
   iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:PutItem
-      Resource:
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/MarketsTable
+    - ${file(iam/MarketsTableIAM.yml):MarketsTableIAM}
 
 resources:
   Resources:
-    MarketsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: MarketsTable
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
+    MarketsTable: ${file(resources/MarketsTable.yml):MarketsTable}
 
 functions:
   createMarket:
@@ -39,3 +27,8 @@ functions:
       - http:
           method: POST
           path: /market
+
+custom:
+  MarketsTable:
+    name: !Ref MarketsTable
+    arn: !GetAtt MarketsTable.Arn
