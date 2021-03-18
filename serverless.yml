@@ -11,11 +11,31 @@ provider:
   memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: us-east-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/MarketsTable
+
+resources:
+  Resources:
+    MarketsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: MarketsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
 
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  createMarket:
+    handler: src/handlers/createMarket.handler
     events:
       - http:
-          method: GET
-          path: /hello
+          method: POST
+          path: /market
