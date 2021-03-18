@@ -25,6 +25,32 @@ async function createMarket(event, context) {
     display
   );
 
+  let existingMarkets;
+
+  try {
+    const result = await dynamodb
+      .scan({
+        TableName: process.env.MARKETS_TABLE_NAME,
+      })
+      .promise();
+
+    existingMarkets = result.Items;
+  } catch (error) {
+    console.error(error);
+    throw new createError.InternalServerError(error);
+  }
+
+  for (let i = 0; i < existingMarkets.length; i++) {
+    if (
+      existingMarkets[i].country === country &&
+      existingMarkets[i].currency === currency
+    ) {
+      throw new createError.BadRequest(
+        '{"error": "Market already exists, try a different country/currency combination or search id in all markets to update the data"}'
+      );
+    }
+  }
+
   const now = new Date();
 
   const market = {
