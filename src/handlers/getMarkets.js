@@ -1,5 +1,4 @@
 import AWS from 'aws-sdk';
-import middy from '@middy/core';
 import commonMiddleware from '../lib/commonMiddleware';
 import createError from 'http-errors';
 
