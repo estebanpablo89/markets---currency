@@ -27,6 +27,12 @@ functions:
       - http:
           method: POST
           path: /market
+  getMarkets:
+    handler: src/handlers/getMarkets.handler
+    events:
+      - http:
+          method: GET
+          path: /markets
 
 custom:
   MarketsTable:

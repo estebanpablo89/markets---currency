@@ -2,5 +2,6 @@ MarketsTableIAM:
   Effect: Allow
   Action:
     - dynamodb:PutItem
+    - dynamodb:Scan
   Resource:
     - ${self:custom.MarketsTable.arn}
