@@ -20,7 +20,7 @@ async function createMarket(event, context) {
     id: uuid(),
     country,
     currency,
-    format: {
+    currencyFormat: {
       code_symbol,
       show_cents,
       display,

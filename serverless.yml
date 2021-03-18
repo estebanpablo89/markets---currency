@@ -39,6 +39,12 @@ functions:
       - http:
           method: GET
           path: /market/{id}
+  updateMarket:
+    handler: src/handlers/updateMarket.handler
+    events:
+      - http:
+          method: PATCH
+          path: /market/{id}
 
 custom:
   MarketsTable:
