@@ -133,7 +133,7 @@ describe('Market', () => {
     );
   });
 
-  it('returns 400 status and Incorrect format message if display in market is not correct', async () => {
+  it('returns 400 status and Incorrect format message if code_symbol in market is not correct', async () => {
     const response = await postMarket({
       country: 'Portugal',
       currency: 'CAD',
