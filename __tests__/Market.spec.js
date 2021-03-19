@@ -4,8 +4,8 @@ const url =
 const request = require('supertest')(url);
 
 const validMarket = {
-  country: 'Ecuador',
-  currency: 'USD',
+  country: 'Portugal',
+  currency: 'CAD',
   code_symbol: 'symbol',
   currency_before_price: true,
   show_cents: true,
@@ -16,33 +16,41 @@ const postMarket = (market = validMarket) => {
   return request.post('/market').send(market);
 };
 
-describe('Market', () => {
-  it('returns 201 OK when a market is created', async () => {
-    const response = await postMarket();
-    expect(response.status).toBe(201);
-    request.delete(`/market/${response.body.id}`);
-  });
+const deleteMarket = id => {
+  return request.delete(`/market/${id}`);
+};
 
+describe('Market', () => {
   it('returns 201 OK with data when a market is created', async () => {
     const response = await postMarket();
     expect(response.status).toBe(201);
     expect(response.body.id).toBeDefined();
     expect(response.body.country).toBeDefined();
     expect(response.body.currency).toBeDefined();
-    request.delete(`/market/${response.body.id}`);
+    await deleteMarket(response.body.id);
   });
 
   it('returns saved market from database', async () => {
     const response = await postMarket();
     const market = await request.get(`/market/${response.body.id}`);
     expect(response.body.id).toBe(market.body.id);
-    request.delete(`/market/${response.body.id}`);
+    await deleteMarket(response.body.id);
+  });
+
+  it('returns 400 and Error message if market (country/currency) is already in database', async () => {
+    const response1 = await postMarket();
+    const response2 = await postMarket();
+    expect(response2.status).toBe(400);
+    expect(response2.body.error).toBe(
+      'Market already exists, try a different country/currency combination or search id in all markets to update the data'
+    );
+    await deleteMarket(response1.body.id);
   });
 
   it('returns 400 status and Missing fields message if a value in market is falsy', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
-      currency: 'USD',
+      country: 'Portugal',
+      currency: 'CAD',
       code_symbol: 'symbol',
       currency_before_price: true,
     });
@@ -52,7 +60,7 @@ describe('Market', () => {
 
   it('returns 400 status and Incorrect currency message if currency in market is incorrect', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
+      country: 'Portugal',
       currency: 'lh4jk32h',
       code_symbol: 'symbol',
       currency_before_price: true,
@@ -68,7 +76,7 @@ describe('Market', () => {
   it('returns 400 status and Incorrect country message if country in market is incorrect', async () => {
     const response = await postMarket({
       country: 'Ecuadordaslkjf',
-      currency: 'USD',
+      currency: 'CAD',
       code_symbol: 'symbol',
       currency_before_price: true,
       show_cents: true,
@@ -82,8 +90,8 @@ describe('Market', () => {
 
   it('returns 400 status and Incorrect format message if currency_before_price in market is not boolean', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
-      currency: 'USD',
+      country: 'Portugal',
+      currency: 'CAD',
       code_symbol: 'symbol',
       currency_before_price: 'klasfd8',
       show_cents: true,
@@ -97,8 +105,8 @@ describe('Market', () => {
 
   it('returns 400 status and Incorrect format message if show_cents in market is not boolean', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
-      currency: 'USD',
+      country: 'Portugal',
+      currency: 'CAD',
       code_symbol: 'symbol',
       currency_before_price: 'klasfd8',
       show_cents: 'kshadsk',
@@ -112,8 +120,8 @@ describe('Market', () => {
 
   it('returns 400 status and Incorrect format message if display in market is not correct', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
-      currency: 'USD',
+      country: 'Portugal',
+      currency: 'CAD',
       code_symbol: 'symbol',
       currency_before_price: true,
       show_cents: true,
@@ -127,8 +135,8 @@ describe('Market', () => {
 
   it('returns 400 status and Incorrect format message if display in market is not correct', async () => {
     const response = await postMarket({
-      country: 'Ecuador',
-      currency: 'USD',
+      country: 'Portugal',
+      currency: 'CAD',
       code_symbol: 'lkjl',
       currency_before_price: true,
       show_cents: true,
